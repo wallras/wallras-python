@@ -4,12 +4,12 @@
 # workspace at http://localhost:8080/wallras/ui (token: hub-admin-change-me) and look at the Nodes tab.
 # Tokens must be at least 24 characters. Change every token before using this anywhere but your own machine.
 x-node: &node
-  image: ghcr.io/wallras/wallras-engine:0.18
+  image: ghcr.io/wallras/wallras-engine:0.19
   restart: unless-stopped
   depends_on: [hub]
 services:
   hub:
-    image: ghcr.io/wallras/wallras-engine:0.18
+    image: ghcr.io/wallras/wallras-engine:0.19
     restart: unless-stopped
     ports: ["8080:8080"]
     volumes: ["hub-data:/data"]

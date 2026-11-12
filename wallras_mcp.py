@@ -24,7 +24,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-VERSION = "0.18.1"
+VERSION = "0.19.0"
 PROTOCOLS = ("2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05")
 
 
@@ -40,6 +40,9 @@ TOOLS = {
                          "each with the call to look closer.", _schema({"days": N}), "GET", "/wallras/overview", "query", False),
     "wallras_judge": ("Live judge scores: the pass rate of real answers a judge model scored, per model and per prompt "
                       "version, and recent failures.", _schema({"days": N, "model": S}), "GET", "/wallras/judge", "query", False),
+    "wallras_fleet": ("Active-active: every Wallras container and worker on this database, its version, when it last "
+                      "checked in and what it served; flags different versions running at once.", _schema({}), "GET",
+                      "/wallras/fleet", "query", False),
     "wallras_hub": ("On a hub: every node in one view: models drifting on several nodes at once, silent nodes, "
                     "each node's next actions, request totals.", _schema(), "GET", "/wallras/hub/overview", "query", False),
     "wallras_hub_nodes": ("On a hub: each node's status, engine version, last report, usage and drift.", _schema(),

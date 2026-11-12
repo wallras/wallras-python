@@ -52,6 +52,16 @@ docker compose -f examples/docker-compose.hub.yml up -d
 
 Send requests to a node (`http://localhost:8081/v1` or `:8082`, with your provider key), then open `http://localhost:8080/wallras/ui` and the Nodes tab.
 
+## Try active-active
+
+[`examples/docker-compose.active.yml`](examples/docker-compose.active.yml) starts Postgres, three Wallras containers and a load balancer. Any container answers any request, and together they keep one tamper-evident record:
+
+```bash
+docker compose -f examples/docker-compose.active.yml up -d
+```
+
+Send requests to `http://localhost:8080/v1`, then ask the MCP server's `wallras_fleet` tool (or `GET /wallras/fleet`) which containers answered.
+
 ## Issues
 
 Bugs and ideas for the clients, or for Wallras itself: [open an issue](https://github.com/wallras/wallras-python/issues). Security reports: see [SECURITY.md](https://wallras-site.onrender.com/security.html), not public issues.

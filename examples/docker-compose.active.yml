@@ -1,0 +1,48 @@
+# Wallras active-active: three containers behind a load balancer, sharing one Postgres database.
+#   docker compose -f docker-compose.active.yml up -d
+# Point your AI client at http://localhost:8080/v1 (with your provider key): any container answers.
+# Then GET http://localhost:8080/wallras/fleet with X-Wallras-Token: admin-change-this-token-please
+# In production use your own managed Postgres (with TLS: ?sslmode=require) and change every secret here.
+x-wallras: &wallras
+  image: ghcr.io/wallras/wallras-engine:0.19
+  restart: unless-stopped
+  depends_on:
+    db: {condition: service_healthy}
+  environment: &env
+    WALLRAS_DATABASE_URL: postgresql://wallras:db-change-this-password@db:5432/wallras
+    WALLRAS_UPSTREAM: https://api.openai.com/v1
+    WALLRAS_ADMIN_TOKEN: admin-change-this-token-please
+    WALLRAS_TRUSTED_PROXY_HOPS: "1"       # the load balancer in front
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment: {POSTGRES_USER: wallras, POSTGRES_PASSWORD: db-change-this-password, POSTGRES_DB: wallras}
+    volumes: ["db-data:/var/lib/postgresql/data"]
+    healthcheck: {test: ["CMD", "pg_isready", "-U", "wallras"], interval: 3s, retries: 20}
+  wallras-1: {<<: *wallras, environment: {<<: *env, WALLRAS_INSTANCE_NAME: wallras-1}}
+  wallras-2: {<<: *wallras, environment: {<<: *env, WALLRAS_INSTANCE_NAME: wallras-2}}
+  wallras-3: {<<: *wallras, environment: {<<: *env, WALLRAS_INSTANCE_NAME: wallras-3}}
+  lb:
+    image: nginx:1.29
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    depends_on: [wallras-1, wallras-2, wallras-3]
+    configs: [{source: lb, target: /etc/nginx/conf.d/default.conf}]
+configs:
+  lb:
+    content: |
+      upstream wallras { server wallras-1:8080 max_fails=2 fail_timeout=5s; server wallras-2:8080 max_fails=2 fail_timeout=5s; server wallras-3:8080 max_fails=2 fail_timeout=5s; }
+      server {
+        listen 8080;
+        client_max_body_size 32m;
+        location / {
+          proxy_pass http://wallras;
+          proxy_next_upstream error timeout http_502 http_503;
+          proxy_buffering off;            # streamed answers go straight through
+          proxy_read_timeout 300s;
+          proxy_set_header Host $$host;
+          proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
+        }
+      }
+volumes: {db-data: {}}
