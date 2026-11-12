@@ -1,0 +1,41 @@
+# Wallras: one hub and two nodes on your machine, to try the fleet view.
+#   docker compose -f docker-compose.hub.yml up -d
+# Send traffic to a node (localhost:8081 or :8082, /v1, with your provider key), then open the hub's
+# workspace at http://localhost:8080/wallras/ui (token: hub-admin-change-me) and look at the Nodes tab.
+# Tokens must be at least 24 characters. Change every token before using this anywhere but your own machine.
+x-node: &node
+  image: ghcr.io/wallras/wallras-engine:0.18
+  restart: unless-stopped
+  depends_on: [hub]
+services:
+  hub:
+    image: ghcr.io/wallras/wallras-engine:0.18
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    volumes: ["hub-data:/data"]
+    environment:
+      WALLRAS_ADMIN_TOKEN: hub-admin-change-me
+      WALLRAS_TOKENS: '{"checkout": {"token": "node-checkout-change-this-token", "role": "node"}, "support": {"token": "node-support-change-this-token", "role": "node"}}'
+  checkout:
+    <<: *node
+    ports: ["8081:8080"]
+    volumes: ["checkout-data:/data"]
+    environment:
+      WALLRAS_UPSTREAM: https://api.openai.com/v1
+      WALLRAS_ADMIN_TOKEN: checkout-admin-change-me
+      WALLRAS_NODE_NAME: Checkout
+      WALLRAS_HUB_URL: http://hub:8080          # a private network; use https:// across machines
+      WALLRAS_HUB_TOKEN: node-checkout-change-this-token
+      WALLRAS_HUB_INTERVAL: "10"                # every 10 s for the demo; the default is 60
+  support:
+    <<: *node
+    ports: ["8082:8080"]
+    volumes: ["support-data:/data"]
+    environment:
+      WALLRAS_UPSTREAM: https://api.openai.com/v1
+      WALLRAS_ADMIN_TOKEN: support-admin-change-me
+      WALLRAS_NODE_NAME: Support
+      WALLRAS_HUB_URL: http://hub:8080
+      WALLRAS_HUB_TOKEN: node-support-change-this-token
+      WALLRAS_HUB_INTERVAL: "10"
+volumes: {hub-data: {}, checkout-data: {}, support-data: {}}

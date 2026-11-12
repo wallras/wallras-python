@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wallras"
+version = "0.18.1"
+description = "Clients for Wallras, the AI monitoring proxy: an MCP server for AI agents and a zero-dependency Python SDK"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+dependencies = []
+keywords = ["llm", "monitoring", "mcp", "observability", "drift", "ai-agents"]
+classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS Independent",
+               "Topic :: System :: Monitoring"]
+
+[project.scripts]
+wallras-mcp = "wallras_mcp:main"
+
+[project.urls]
+Homepage = "https://wallras-site.onrender.com"
+Documentation = "https://wallras-site.onrender.com/docs.html"
+Issues = "https://github.com/wallras/wallras-python/issues"
+
+[tool.setuptools]
+py-modules = ["wallras_mcp", "wallras_sdk"]
