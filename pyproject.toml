@@ -18,8 +18,8 @@ classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS In
 wallras-mcp = "wallras_mcp:main"
 
 [project.urls]
-Homepage = "https://wallras-site.onrender.com"
-Documentation = "https://wallras-site.onrender.com/docs.html"
+Homepage = "https://wallras.com"
+Documentation = "https://wallras.com/docs.html"
 Issues = "https://github.com/wallras/wallras-python/issues"
 
 [tool.setuptools]

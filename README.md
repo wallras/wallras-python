@@ -1,6 +1,6 @@
 # Wallras clients for Python
 
-Two single-file, zero-dependency clients for [Wallras](https://wallras-site.onrender.com), the AI monitoring proxy you run next to your app:
+Two single-file, zero-dependency clients for [Wallras](https://wallras.com), the AI monitoring proxy you run next to your app:
 
 - **`wallras_mcp.py`**: an MCP server, so Claude Desktop, Claude Code, Cursor or your own agent can check drift, read requests and agent runs, work the review queue, fetch prompts and run regression sets. Read-only unless you pass `--enable-writes`.
 - **`wallras_sdk.py`**: report what Wallras can't see on its own: a self-hosted model's token probabilities and decision records, agent steps (tool runs, lookups), and feedback; fetch prompt versions.
@@ -40,7 +40,7 @@ w.report(model="llama-3.1-8b", prompt=prompt, answer=text,
          tokens=Wallras.tokens_from_openai(response["choices"][0]["logprobs"]["content"]))
 ```
 
-Reports go in the background and never raise into your code. See the [docs](https://wallras-site.onrender.com/docs.html) for traces, decision records and prompts.
+Reports go in the background and never raise into your code. See the [docs](https://wallras.com/docs.html) for traces, decision records and prompts.
 
 ## Try a hub with two nodes
 
@@ -64,6 +64,6 @@ Send requests to `http://localhost:8080/v1`, then ask the MCP server's `wallras_
 
 ## Issues
 
-Bugs and ideas for the clients, or for Wallras itself: [open an issue](https://github.com/wallras/wallras-python/issues). Security reports: see [SECURITY.md](https://wallras-site.onrender.com/security.html), not public issues.
+Bugs and ideas for the clients, or for Wallras itself: [open an issue](https://github.com/wallras/wallras-python/issues). Security reports: see [SECURITY.md](https://wallras.com/security.html), not public issues.
 
 MIT licensed. The files here are copies of the ones published with each Wallras release.
