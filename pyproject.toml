@@ -19,7 +19,7 @@ wallras-mcp = "wallras_mcp:main"
 
 [project.urls]
 Homepage = "https://wallras.com"
-Documentation = "https://wallras.com/docs.html"
+Documentation = "https://wallras.com/docs"
 Issues = "https://github.com/wallras/wallras-python/issues"
 
 [tool.setuptools]
