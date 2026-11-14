@@ -10,13 +10,13 @@ Both talk only to your own Wallras with your token. The Wallras engine itself sh
 ## Install
 
 ```bash
-pip install git+https://github.com/wallras/wallras-python
+pip install wallras
 ```
 
 Or run the MCP server without installing anything:
 
 ```bash
-uvx --from git+https://github.com/wallras/wallras-python wallras-mcp
+uvx --from wallras wallras-mcp
 ```
 
 Each file also works on its own: copy it next to your code.
@@ -25,7 +25,7 @@ Each file also works on its own: copy it next to your code.
 
 ```json
 {"mcpServers": {"wallras": {
-  "command": "uvx", "args": ["--from", "git+https://github.com/wallras/wallras-python", "wallras-mcp"],
+  "command": "uvx", "args": ["--from", "wallras", "wallras-mcp"],
   "env": {"WALLRAS_URL": "http://localhost:8080", "WALLRAS_TOKEN": "a viewer or admin token"}}}}
 ```
 

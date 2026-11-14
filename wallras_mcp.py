@@ -246,8 +246,8 @@ class Server:
 
 
 def main():
-    """The wallras-mcp command (pip install git+https://github.com/wallras/wallras-python, or
-    uvx --from git+https://github.com/wallras/wallras-python wallras-mcp)."""
+    """The wallras-mcp command (pip install wallras, or
+    uvx --from wallras wallras-mcp)."""
     unknown = [a for a in sys.argv[1:] if a not in ("--enable-writes", "--help", "-h")]
     if unknown or any(a in ("--help", "-h") for a in sys.argv[1:]):
         sys.stderr.write(__doc__)
