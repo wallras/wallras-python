@@ -4,7 +4,7 @@
 # Then GET http://localhost:8080/wallras/fleet with X-Wallras-Token: admin-change-this-token-please
 # In production use your own managed Postgres (with TLS: ?sslmode=require) and change every secret here.
 x-wallras: &wallras
-  image: ghcr.io/wallras/wallras-engine:0.20
+  image: ghcr.io/wallras/wallras-engine:0.21
   restart: unless-stopped
   depends_on:
     db: {condition: service_healthy}

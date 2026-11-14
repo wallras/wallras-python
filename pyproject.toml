@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wallras"
-version = "0.20.1"
+version = "0.21.0"
 description = "Clients for Wallras, the AI monitoring proxy: an MCP server for AI agents and a zero-dependency Python SDK"
 readme = "README.md"
 license = "MIT"
