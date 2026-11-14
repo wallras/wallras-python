@@ -24,7 +24,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-VERSION = "0.20.0"
+VERSION = "0.20.1"
 PROTOCOLS = ("2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05")
 
 
@@ -136,11 +136,20 @@ class Server:
                  "annotations": {"readOnlyHint": not TOOLS[n][5], "destructiveHint": False, "openWorldHint": False}}
                 for n in order if self.write or not TOOLS[n][5]]
 
-    def _http(self, method, path, query=None, body=None, provider=False):
+    def _keys_for(self, args):
+        """Only the keys a run needs: the named provider's (plus the OpenAI-style key when a judge model grades
+        the answers). With no provider named, a set can mix providers, so each configured key goes along; the
+        engine uses each only with its own provider."""
+        header = {"openai": "authorization", "anthropic": "x-api-key", "gemini": "x-goog-api-key"}
+        want = {header[args["provider"]]} if args.get("provider") in header else set(header.values())
+        if args.get("judge_model") or args.get("gate_judge_model"):
+            want.add("authorization")
+        return {k: v for k, v in self.keys.items() if v and k in want}
+
+    def _http(self, method, path, query=None, body=None, keys=None):
         url = self.url + path + ("?" + urllib.parse.urlencode(query) if query else "")
         headers = {"x-wallras-token": self.token, "accept": "application/json"}
-        if provider:
-            headers.update({k: v for k, v in self.keys.items() if v})
+        headers.update(keys or {})
         data = None
         if body is not None:
             data = json.dumps(body).encode()
@@ -164,6 +173,7 @@ class Server:
             return {"isError": True, "content": [{"type": "text", "text": f"Unknown tool {name}"}]}
         _d, schema, method, path, how, _w = TOOLS[name]
         args = _clean(args)
+        keys = self._keys_for(args) if name in ("wallras_run_dataset", "wallras_promote_prompt") else None
         missing = [k for k in schema["required"] if k not in args]
         if missing:
             return {"isError": True, "content": [{"type": "text", "text": f"Missing: {', '.join(missing)}"}]}
@@ -186,7 +196,7 @@ class Server:
             args.pop("id")
         query = args if how in ("query", "path+query") else None
         body = args if how in ("json", "path+json") else None
-        status, data = self._http(method, path, query, body, provider=name in ("wallras_run_dataset", "wallras_promote_prompt"))
+        status, data = self._http(method, path, query, body, keys=keys)
         text = json.dumps(data, ensure_ascii=False, indent=1)
         if len(text) > 60_000:
             text = text[:60_000] + "\n... (cut; narrow the request with filters)"
@@ -236,7 +246,8 @@ class Server:
 
 
 def main():
-    """The wallras-mcp command (pip install wallras, or uvx --from wallras wallras-mcp)."""
+    """The wallras-mcp command (pip install git+https://github.com/wallras/wallras-python, or
+    uvx --from git+https://github.com/wallras/wallras-python wallras-mcp)."""
     unknown = [a for a in sys.argv[1:] if a not in ("--enable-writes", "--help", "-h")]
     if unknown or any(a in ("--help", "-h") for a in sys.argv[1:]):
         sys.stderr.write(__doc__)
