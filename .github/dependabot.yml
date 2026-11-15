@@ -4,6 +4,13 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      # every github/codeql-action step must be on the same version, so they update together
+      codeql:
+        patterns: ["github/codeql-action*"]
+      actions:
+        patterns: ["*"]
+        exclude-patterns: ["github/codeql-action*"]
   - package-ecosystem: pip
     directory: /
     schedule:
